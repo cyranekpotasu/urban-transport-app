@@ -3,4 +3,4 @@ project(UrbanTransportApp)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(UrbanTransportApp main.cpp lib/graph.h)
+add_executable(UrbanTransportApp main.cpp lib/graph.h src/graph.cpp)

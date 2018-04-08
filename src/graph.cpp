@@ -7,7 +7,7 @@
 
 void Graph::add_vertex(std::string &&name) {
     auto v = std::make_shared<Vertex>(std::move(name));
-    vertices[name] = v;
+    vertices[v->name] = v;
 }
 
 void Graph::add_edge(const std::string &first,
@@ -26,10 +26,10 @@ void Graph::add_edge(const std::string &first,
 
 void Graph::print_graph() const noexcept {
     for(const auto& vertex: vertices) {
-        std::cout << vertex.first << 'neighbours: ' << std::endl;
+        std::cout << vertex.first << " neighbours: " << std::endl;
         for(const auto& neighbour: vertex.second->neighbours)
-            std::cout << std::setw(4)
-                      << neighbour.first->name << "weight: "
+            std::cout << "\t" << neighbour.first->name << " weight: "
                       << neighbour.second;
+        std::cout << std::endl;
     }
 }

@@ -8,14 +8,14 @@ struct Vertex {
     std::string name;
     std::vector<Edge> neighbours;
 
-    explicit Vertex(std::string&& _name): name(std::move(_name)) {}
+    explicit Vertex(std::string _name): name(_name) {}
 };
 
 class Graph
 {
     std::map<std::string, std::shared_ptr<Vertex>> vertices;
 public:
-    void add_vertex(std::string&& name);
+    void add_vertex(std::string name);
     void add_edge(const std::string& first,
                   const std::string& second, int weight);
     void print_graph() const noexcept;

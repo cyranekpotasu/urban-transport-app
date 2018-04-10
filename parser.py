@@ -6,7 +6,7 @@ import os
 
 def get_coordinates_data():
     coord_data = {}
-    with open('data/csv/coordinates.csv', 'r') as csvfile:
+    with open('data/coordinates.csv', 'r') as csvfile:
         reader = csv.DictReader(csvfile, delimiter=';')
         for row in reader:
             coord_data[row['ID']] = (row['longitude'], row['latitude'])

@@ -19,4 +19,7 @@ public:
     void add_edge(const std::string& first,
                   const std::string& second, int weight);
     void print_graph() const noexcept;
+    void BFS(const std::string& name, const std::string& name_dest);	
+    void DFS(const std::string& name, const std::string& name_dest);
+    bool DFS_util(const std::string& name,const std::string& name_dest, std::map<std::string,bool>& map);
 };

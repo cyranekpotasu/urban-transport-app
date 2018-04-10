@@ -13,5 +13,8 @@ int main() {
     g.add_edge("Dubois", "Pomorska", 1);
     g.add_edge("Hala targowa", "Bema", 3);
     g.print_graph();
+    g.BFS("Bema","Botaniczny");
+    std::cout<<std::endl;
+    g.DFS("Bema","Botaniczny");
 }
 

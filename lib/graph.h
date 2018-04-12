@@ -5,16 +5,21 @@
 #include <list>
 #include <map>
 
+struct Vertex;
+using Edge = std::pair<std::shared_ptr<Vertex>, int>;
+using VertexPtr = std::shared_ptr<Vertex>;
 
 struct Vertex {
-    using Edge = std::pair<std::shared_ptr<Vertex>, int>;
     std::string name;
     std::vector<Edge> neighbours;
 
+    Vertex() {}
     explicit Vertex(std::string _name) : name(_name) {}
+    bool operator<(const Vertex& other) const {
+        return name < other.name;
+    }
 };
 
-using VertexPtr = std::shared_ptr<Vertex>;
 
 class Graph {
     std::map<std::string, VertexPtr> vertices;
@@ -30,6 +35,6 @@ public:
 
     void DFS(const std::string &name, const std::string &name_dest) const;
 
-    std::list<Vertex> trace_path(const std::map<Vertex, Vertex> &parent_map,
-                                 const Vertex &start, const Vertex &dest) const;
+    std::list<Vertex> trace_path(std::map<Vertex, Vertex> parent_map,
+                                 Vertex start, Vertex dest) const;
 };

@@ -4,6 +4,7 @@
 #include <vector>
 #include <list>
 #include <map>
+#include <cmath>
 
 struct Vertex;
 using Edge = std::pair<std::shared_ptr<Vertex>, int>;
@@ -43,4 +44,6 @@ public:
 
     std::list<Vertex> trace_path(std::map<Vertex, Vertex> parent_map,
                                  Vertex start, Vertex dest) const;
+
+    double get_heuristic_distance(const Vertex& from, const Vertex& to) const;
 };

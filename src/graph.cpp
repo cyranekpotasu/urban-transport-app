@@ -110,3 +110,9 @@ std::list<Vertex> Graph::trace_path(std::map<Vertex, Vertex> parent_map,
     std::cout << std::endl;
     return path;
 }
+
+double Graph::get_heuristic_distance(const Vertex &from, const Vertex &to) const {
+    auto lon_distance = from.longitude - to.longitude;
+    auto lat_distance = from.latitude - to.latitude;
+    return sqrt(lon_distance * lon_distance + lat_distance * lat_distance);
+}

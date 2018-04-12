@@ -3,9 +3,9 @@
 //
 #include "../lib/graph.h"
 
-void Graph::add_vertex(std::string name) {
+void Graph::add_vertex(std::string name, double longitude, double latitude) {
     if (vertices.find(name) == vertices.end()) {
-        auto v = std::make_shared<Vertex>(name);
+        auto v = std::make_shared<Vertex>(name, longitude, latitude);
         vertices[name] = v;
     }
 }

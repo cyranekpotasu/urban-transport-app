@@ -12,10 +12,16 @@ using VertexPtr = std::shared_ptr<Vertex>;
 struct Vertex {
     std::string name;
     std::vector<Edge> neighbours;
+    double longitude;
+    double latitude;
 
-    Vertex() {}
-    explicit Vertex(std::string _name) : name(_name) {}
-    bool operator<(const Vertex& other) const {
+    Vertex() = default;
+
+    explicit Vertex(std::string _name, double _longitude,
+                    double _latitude) : name(_name), longitude(_longitude),
+                                        latitude(_latitude) {}
+
+    bool operator<(const Vertex &other) const {
         return name < other.name;
     }
 };
@@ -24,7 +30,7 @@ struct Vertex {
 class Graph {
     std::map<std::string, VertexPtr> vertices;
 public:
-    void add_vertex(std::string name);
+    void add_vertex(std::string name, double longitude, double latitude);
 
     void add_edge(const std::string &first,
                   const std::string &second, int weight);

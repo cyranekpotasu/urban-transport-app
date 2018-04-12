@@ -42,8 +42,8 @@ int main() {
         load_tram_line(g, "../data/csv/" + file);
     }
     g.print_graph();
-    g.BFS("Bema","Botaniczny");
+    g.BFS("ZOO","Prusa");
     std::cout<<std::endl;
-    g.DFS("Bema","Botaniczny");
+    g.DFS("ZOO","Prusa");
 }
 

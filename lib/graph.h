@@ -3,7 +3,9 @@
 #include <memory>
 #include <vector>
 #include <list>
+#include <queue>
 #include <map>
+#include <set>
 #include <cmath>
 
 struct Vertex;
@@ -42,8 +44,14 @@ public:
 
     void DFS(const std::string &name, const std::string &name_dest) const;
 
+    void a_star(const std::string& start, const std::string& dest) const;
+
     std::list<Vertex> trace_path(std::map<Vertex, Vertex> parent_map,
                                  Vertex start, Vertex dest) const;
 
-    double get_heuristic_distance(const Vertex& from, const Vertex& to) const;
+    int get_heuristic_distance(const Vertex& from, const Vertex& to) const;
+
+    int get_total_distance(const Vertex& from, const Vertex& to, int dist_done) const;
+
+    int find_edge_weight(const Vertex& from, const Vertex& to) const;
 };

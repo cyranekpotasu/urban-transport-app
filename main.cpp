@@ -14,15 +14,15 @@ void load_tram_line(Graph &graph, std::string csv_filename) {
     getline(record, distance, ',');
     getline(record, longitude, ',');
     record >> latitude;
-    graph.add_vertex(name, atoi(longitude.c_str()),
-                     atoi(latitude.c_str()));
+    graph.add_vertex(name, atof(longitude.c_str()),
+                     atof(latitude.c_str()));
 
     while (getline(csv_file, line)) {
         std::istringstream record(line);
         std::string prev_name(name);
         getline(record, name, ',');
-        graph.add_vertex(name, atoi(longitude.c_str()),
-                         atoi(latitude.c_str()));
+        graph.add_vertex(name, atof(longitude.c_str()),
+                         atof(latitude.c_str()));
         graph.add_edge(prev_name, name, atoi(distance.c_str()));
         getline(record, distance, ',');
         getline(record, longitude, ',');
@@ -44,8 +44,9 @@ int main() {
         load_tram_line(g, "../data/csv/" + file);
     }
     g.print_graph();
-    g.BFS("ZOO", "Prusa");
     std::cout << std::endl;
-    g.DFS("ZOO", "Prusa");
+    g.BFS("ZOO", "Prusa");
+    g.BFS("KLECINA", "Dmowskiego");
+    g.a_star("KLECINA", "Dmowskiego");
 }
 

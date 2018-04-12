@@ -13,9 +13,11 @@ struct Vertex {
     explicit Vertex(std::string _name): name(_name) {}
 };
 
+using VertexPtr = std::shared_ptr<Vertex>;
+
 class Graph
 {
-    std::map<std::string, std::shared_ptr<Vertex>> vertices;
+    std::map<std::string, VertexPtr> vertices;
 public:
     void add_vertex(std::string name);
     void add_edge(const std::string& first,

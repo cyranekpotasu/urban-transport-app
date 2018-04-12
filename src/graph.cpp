@@ -48,7 +48,7 @@ void Graph::BFS(const std::string& name, const std::string& name_dest){
 	/* Mark first visited as true */
 	visited[name] = true;
 	/* Create a queue for BFS */
-	std::list<std::shared_ptr<Vertex>> queue;
+	std::list<VertexPtr> queue;
 	queue.push_back(this->vertices.at(name));
 	while(!queue.empty()){
 		auto x = queue.front();
@@ -74,7 +74,7 @@ void Graph::DFS(const std::string& name, const std::string& name_dest){
     /* Mark first visited as true */
     visited[name] = true;
     /* Create a queue for BFS */
-    std::list<std::shared_ptr<Vertex>> stack;
+    std::list<VertexPtr> stack;
     stack.push_back(this->vertices.at(name));
     while(!stack.empty()){
         auto x = stack.back();

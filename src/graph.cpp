@@ -99,20 +99,79 @@ void Graph::DFS(const std::string &name, const std::string &name_dest) const {
 
 std::list<Vertex> Graph::trace_path(std::map<Vertex, Vertex> parent_map,
                                     Vertex start, Vertex end) const {
+    int weight = 0;
     std::list<Vertex> path;
     path.push_front(end);
     while (end.name != start.name) {
+        auto prev = end;
         end = parent_map[end];
+        weight += find_edge_weight(prev, end);
         path.push_front(end);
     }
     for (const auto &node: path)
         std::cout << node.name << " -> ";
-    std::cout << std::endl;
+    std::cout << std::endl << "Path length: " << weight << std::endl;
     return path;
 }
 
-double Graph::get_heuristic_distance(const Vertex &from, const Vertex &to) const {
-    auto lon_distance = from.longitude - to.longitude;
-    auto lat_distance = from.latitude - to.latitude;
-    return sqrt(lon_distance * lon_distance + lat_distance * lat_distance);
+int Graph::get_heuristic_distance(const Vertex &from, const Vertex &to) const {
+    auto lon_distance = (from.longitude - to.longitude) * 300;
+    auto lat_distance = (from.latitude - to.latitude) * 300;
+    return static_cast<int>(sqrt(lon_distance * lon_distance + lat_distance * lat_distance));
 }
+
+int Graph::get_total_distance(const Vertex &from, const Vertex &to, int dist_done) const {
+    return get_heuristic_distance(from, to) + dist_done;
+}
+
+void Graph::a_star(const std::string &start, const std::string &dest) const {
+    struct Node {
+        int distance;
+        int distance_from_start;
+        VertexPtr path_extension;
+
+        Node() = default;
+        Node(VertexPtr vertex, int dist, int total_dist) : path_extension(vertex),
+                                                           distance_from_start(dist),
+                                                           distance(total_dist) {}
+
+        bool operator<(const Node &rhs) const { return this->distance > rhs.distance; }
+    };
+
+    std::priority_queue<Node> open;
+    std::set<VertexPtr> closed;
+    std::map<std::string, Node> visited;
+    std::map<Vertex, Vertex> parent_map;
+    auto destination = vertices.at(dest);
+    open.emplace(Node(vertices.at(start), 0, 0));
+    while (open.top().path_extension->name != dest) {
+        auto current = open.top();
+        open.pop();
+        closed.insert(current.path_extension);
+        for (const auto &neighbour: current.path_extension->neighbours) {
+            auto neighbour_vertex = neighbour.first;
+            if (closed.find(neighbour_vertex) == closed.end()) {
+                int dist_from_start = current.distance_from_start + neighbour.second;
+                int total_dist = get_total_distance(*neighbour_vertex, *destination,
+                                                    dist_from_start);
+                auto next = Node(neighbour_vertex, dist_from_start, total_dist);
+                auto visited_node = visited.find(neighbour_vertex->name);
+                if (visited_node == visited.end() ||
+                    (*visited_node).second.distance > next.distance) {
+                    open.push(next);
+                    visited[neighbour_vertex->name] = next;
+                    parent_map[*neighbour_vertex] = *current.path_extension;
+                }
+            }
+        }
+    }
+    trace_path(parent_map, *vertices.at(start), *vertices.at(dest));
+}
+
+int Graph::find_edge_weight(const Vertex &from, const Vertex &to) const {
+    for (const auto &neighbour: from.neighbours) {
+        if (neighbour.first->name == to.name)
+            return neighbour.second;
+    }
+}
+

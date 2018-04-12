@@ -45,8 +45,9 @@ int main() {
     }
     g.print_graph();
     std::cout << std::endl;
-    g.BFS("ZOO", "Prusa");
     g.BFS("KLECINA", "Dmowskiego");
     g.a_star("KLECINA", "Dmowskiego");
+    g.BFS("GAJ", "LEŚNICA");
+    g.a_star("GAJ", "LEŚNICA");
 }
 

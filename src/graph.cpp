@@ -130,6 +130,7 @@ void Graph::a_star(const std::string &start, const std::string &dest) const {
         int distance_from_start;
         VertexPtr path_extension;
 
+        Node() = default;
         Node(VertexPtr vertex, int dist, int total_dist) : path_extension(vertex),
                                                            distance_from_start(dist),
                                                            distance(total_dist) {}
@@ -139,30 +140,28 @@ void Graph::a_star(const std::string &start, const std::string &dest) const {
 
     std::priority_queue<Node> open;
     std::set<VertexPtr> closed;
-    std::set<VertexPtr> visited;
+    std::map<std::string, Node> visited;
     std::map<Vertex, Vertex> parent_map;
     auto destination = vertices.at(dest);
-    int distance_from_start = 0;
-    open.emplace(Node(vertices.at(start), distance_from_start, distance_from_start));
+    open.emplace(Node(vertices.at(start), 0, 0));
     while (open.top().path_extension->name != dest) {
         auto current = open.top();
         open.pop();
-        std::cout << current.path_extension->name << " dequeued with distance "
-                  << current.distance << std::endl;
         closed.insert(current.path_extension);
         for (const auto &neighbour: current.path_extension->neighbours) {
             auto neighbour_vertex = neighbour.first;
-            if (closed.find(neighbour_vertex) == closed.end() &&
-                visited.find(neighbour_vertex) == visited.end()) {
+            if (closed.find(neighbour_vertex) == closed.end()) {
                 int dist_from_start = current.distance_from_start + neighbour.second;
                 int total_dist = get_total_distance(*neighbour_vertex, *destination,
                                                     dist_from_start);
                 auto next = Node(neighbour_vertex, dist_from_start, total_dist);
-                open.push(next);
-                visited.insert(next.path_extension);
-                std::cout << next.path_extension->name << " pushed to queue "
-                          << "with distance " << next.distance << std::endl;
-                parent_map[*neighbour_vertex] = *current.path_extension;
+                auto visited_node = visited.find(neighbour_vertex->name);
+                if (visited_node == visited.end() ||
+                    (*visited_node).second.distance > next.distance) {
+                    open.push(next);
+                    visited[neighbour_vertex->name] = next;
+                    parent_map[*neighbour_vertex] = *current.path_extension;
+                }
             }
         }
     }

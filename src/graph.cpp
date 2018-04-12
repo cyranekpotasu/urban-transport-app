@@ -39,7 +39,7 @@ void Graph::print_graph() const noexcept {
     }
 }
 
-void Graph::BFS(const std::string& name, const std::string& name_dest){
+void Graph::BFS(const std::string& name, const std::string& name_dest) const {
 	/* Map to check wheter vertex was visited */
 	std::map<std::string, bool> visited;
 	/* Fill visited with false */
@@ -65,7 +65,7 @@ void Graph::BFS(const std::string& name, const std::string& name_dest){
 	}
 }
 
-void Graph::DFS(const std::string& name, const std::string& name_dest){
+void Graph::DFS(const std::string& name, const std::string& name_dest) const{
     /* Map to check wheter vertex was visited */
     std::map<std::string, bool> visited;
     /* Fill visited with false */
@@ -89,4 +89,19 @@ void Graph::DFS(const std::string& name, const std::string& name_dest){
             }
         }
     }
+}
+
+std::list<Vertex> Graph::trace_path(const std::map<Vertex, Vertex>& parent_map,
+                                           const Vertex &start, const Vertex &end) const {
+    std::list<Vertex> path;
+	auto current = end;
+    path.push_front(current);
+    while(current.name != start.name) {
+//        current = parent_map[current];
+        path.push_front(current);
+    }
+    for(const auto& node: path)
+        std::cout << node.name << " -> ";
+    std::cout << std::endl;
+    return path;
 }

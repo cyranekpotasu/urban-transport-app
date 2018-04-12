@@ -1,6 +1,3 @@
-//
-// Created by cyran on 08.04.18.
-//
 #include "../lib/graph.h"
 
 void Graph::add_vertex(std::string name, double longitude, double latitude) {
@@ -39,7 +36,7 @@ void Graph::print_graph() const noexcept {
     }
 }
 
-void Graph::BFS(const std::string &name, const std::string &name_dest) const {
+Path Graph::BFS(const std::string &name, const std::string &name_dest) const {
     /* Map to check wheter vertex was visited */
     std::map<std::string, bool> visited;
     std::map<Vertex, Vertex> parent_map;
@@ -55,8 +52,7 @@ void Graph::BFS(const std::string &name, const std::string &name_dest) const {
         auto x = queue.front();
         queue.pop_front();
         if (x->name == name_dest) {
-            trace_path(parent_map, *vertices.at(name), *vertices.at(name_dest));
-            return;
+            return trace_path(parent_map, *vertices.at(name), *vertices.at(name_dest));
         }
         for (const auto &neighbour : x->neighbours) {
             if (!visited.at(neighbour.first->name)) {
@@ -68,7 +64,7 @@ void Graph::BFS(const std::string &name, const std::string &name_dest) const {
     }
 }
 
-void Graph::DFS(const std::string &name, const std::string &name_dest) const {
+Path Graph::DFS(const std::string &name, const std::string &name_dest) const {
     /* Map to check wheter vertex was visited */
     std::map<std::string, bool> visited;
     std::map<Vertex, Vertex> parent_map;
@@ -84,8 +80,7 @@ void Graph::DFS(const std::string &name, const std::string &name_dest) const {
         auto x = stack.back();
         stack.pop_back();
         if (x->name == name_dest) {
-            trace_path(parent_map, *vertices.at(name), *vertices.at(name_dest));
-            return;
+            return trace_path(parent_map, *vertices.at(name), *vertices.at(name_dest));
         }
         for (const auto &neighbour : x->neighbours) {
             if (!visited.at(neighbour.first->name)) {
@@ -97,34 +92,7 @@ void Graph::DFS(const std::string &name, const std::string &name_dest) const {
     }
 }
 
-std::list<Vertex> Graph::trace_path(std::map<Vertex, Vertex> parent_map,
-                                    Vertex start, Vertex end) const {
-    int weight = 0;
-    std::list<Vertex> path;
-    path.push_front(end);
-    while (end.name != start.name) {
-        auto prev = end;
-        end = parent_map[end];
-        weight += find_edge_weight(prev, end);
-        path.push_front(end);
-    }
-    for (const auto &node: path)
-        std::cout << node.name << " -> ";
-    std::cout << std::endl << "Path length: " << weight << std::endl;
-    return path;
-}
-
-int Graph::get_heuristic_distance(const Vertex &from, const Vertex &to) const {
-    auto lon_distance = (from.longitude - to.longitude) * 300;
-    auto lat_distance = (from.latitude - to.latitude) * 300;
-    return static_cast<int>(sqrt(lon_distance * lon_distance + lat_distance * lat_distance));
-}
-
-int Graph::get_total_distance(const Vertex &from, const Vertex &to, int dist_done) const {
-    return get_heuristic_distance(from, to) + dist_done;
-}
-
-void Graph::a_star(const std::string &start, const std::string &dest) const {
+Path Graph::a_star(const std::string &start, const std::string &dest) const {
     struct Node {
         int distance;
         int distance_from_start;
@@ -138,15 +106,15 @@ void Graph::a_star(const std::string &start, const std::string &dest) const {
         bool operator<(const Node &rhs) const { return this->distance > rhs.distance; }
     };
 
-    std::priority_queue<Node> open;
+    std::priority_queue<Node> opened;
     std::set<VertexPtr> closed;
     std::map<std::string, Node> visited;
     std::map<Vertex, Vertex> parent_map;
     auto destination = vertices.at(dest);
-    open.emplace(Node(vertices.at(start), 0, 0));
-    while (open.top().path_extension->name != dest) {
-        auto current = open.top();
-        open.pop();
+    opened.emplace(Node(vertices.at(start), 0, 0));
+    while (opened.top().path_extension->name != dest) {
+        auto current = opened.top();
+        opened.pop();
         closed.insert(current.path_extension);
         for (const auto &neighbour: current.path_extension->neighbours) {
             auto neighbour_vertex = neighbour.first;
@@ -158,14 +126,38 @@ void Graph::a_star(const std::string &start, const std::string &dest) const {
                 auto visited_node = visited.find(neighbour_vertex->name);
                 if (visited_node == visited.end() ||
                     (*visited_node).second.distance > next.distance) {
-                    open.push(next);
+                    opened.push(next);
                     visited[neighbour_vertex->name] = next;
                     parent_map[*neighbour_vertex] = *current.path_extension;
                 }
             }
         }
     }
-    trace_path(parent_map, *vertices.at(start), *vertices.at(dest));
+    return trace_path(parent_map, *vertices.at(start), *vertices.at(dest));
+}
+
+int Graph::get_heuristic_distance(const Vertex &from, const Vertex &to) const {
+    auto lon_distance = (from.longitude - to.longitude) * 300;
+    auto lat_distance = (from.latitude - to.latitude) * 300;
+    return static_cast<int>(sqrt(lon_distance * lon_distance + lat_distance * lat_distance));
+}
+
+int Graph::get_total_distance(const Vertex &from, const Vertex &to, int dist_done) const {
+    return get_heuristic_distance(from, to) + dist_done;
+}
+
+Path Graph::trace_path(std::map<Vertex, Vertex> parent_map,
+                       Vertex start, Vertex end) const {
+    int weight = 0;
+    std::deque<Vertex> path;
+    path.push_front(end);
+    while (end.name != start.name) {
+        auto prev = end;
+        end = parent_map[end];
+        weight += find_edge_weight(prev, end);
+        path.push_front(end);
+    }
+    return Path(path, weight);
 }
 
 int Graph::find_edge_weight(const Vertex &from, const Vertex &to) const {
@@ -173,5 +165,10 @@ int Graph::find_edge_weight(const Vertex &from, const Vertex &to) const {
         if (neighbour.first->name == to.name)
             return neighbour.second;
     }
+}
+
+void Graph::add_tramline_to_vertex(std::string vertex, std::string line) {
+    auto v = vertices.at(vertex);
+    v->tram_lines.insert(line);
 }
 

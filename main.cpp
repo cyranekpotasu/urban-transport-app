@@ -62,7 +62,8 @@ int show_menu() {
     std::cout << "Choose option:" << std::endl;
     std::cout << "\t1 - show all tram stops" << std::endl;
     std::cout << "\t2 - search shortest path" << std::endl;
-    std::cout << "\t3 - exit" << std::endl;
+    std::cout << "\t3 - save last path to .dat file" << std::endl;
+    std::cout << "\t4 - exit" << std::endl;
     std::cout << "Your choice: ";
     int choice;
     std::cin >> choice;
@@ -85,7 +86,7 @@ int main() {
     load_graph(g);
     int choice, alg_choice;
     Path path;
-    std::string starting, final;
+    std::string starting, final, filename;
     while(true) {
         int choice = show_menu();
         switch(choice) {
@@ -119,6 +120,12 @@ int main() {
                 break;
 
             case 3:
+            std::cout << "Set filename: ";
+            std::cin >> filename;
+                path.export_path(filename);
+                break;
+
+            case 4:
                 return 0;
 
             default:

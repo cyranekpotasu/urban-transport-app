@@ -26,12 +26,15 @@ void Graph::add_edge(const std::string &first,
     );
 }
 
-void Graph::print_graph() const noexcept {
+void Graph::print_graph(bool verbose) const noexcept {
     for (const auto &vertex: vertices) {
-        std::cout << vertex.first << " neighbours: " << std::endl;
-        for (const auto &neighbour: vertex.second->neighbours)
-            std::cout << "\t" << neighbour.first->name << " distance: "
-                      << neighbour.second;
+        std::cout << vertex.first;
+        if(verbose) {
+            std::cout << " neighbours: " << std::endl;
+            for (const auto &neighbour: vertex.second->neighbours)
+                std::cout << "\t" << neighbour.first->name << " distance: "
+                          << neighbour.second;
+        }
         std::cout << std::endl;
     }
 }

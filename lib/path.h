@@ -2,6 +2,7 @@
 #define URBANTRANSPORTAPP_PATH_H
 
 #include <iostream>
+#include <fstream>
 #include <deque>
 #include "vertex.h"
 
@@ -10,9 +11,11 @@ class Path {
     int path_length;
 
 public:
+    Path() = default;
     Path(const std::deque<Vertex> _path, int length): path(_path), path_length(length) {}
 
     void print_path() const;
+    void export_path(std::string filename) const;
 
 };
 

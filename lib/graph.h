@@ -24,7 +24,7 @@ public:
     void add_edge(const std::string &first,
                   const std::string &second, int weight);
 
-    void print_graph() const noexcept;
+    void print_graph(bool verbose=true) const noexcept;
 
     Path BFS(const std::string &name, const std::string &name_dest) const;
 

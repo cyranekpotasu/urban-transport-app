@@ -1,7 +1,10 @@
-import matplotlib.pyplot as plt
-import csv
+#!/usr/bin/python
 
 import os
+import csv
+import argparse
+
+import matplotlib.pyplot as plt
 
 
 def get_tram_line(csv_filename):
@@ -13,6 +16,14 @@ def get_tram_line(csv_filename):
             longitudes.append(float(row['longitude']))
             latitudes.append(float(row['latitude']))
     return longitudes, latitudes
+
+
+def draw_city_graph():
+    csv_files = os.listdir('data/csv')
+    for file in csv_files:
+        longitudes, latitudes = get_tram_line(f'data/csv/{file}')
+        plt.plot(longitudes, latitudes, marker='o', color='#1f77b4',
+                 linestyle='-')
 
 
 def get_path(path_filename):
@@ -27,12 +38,13 @@ def get_path(path_filename):
 
 
 if __name__ == '__main__':
-    csv_files = os.listdir('data/csv')
-    for file in csv_files:
-        longitudes, latitudes = get_tram_line(f'data/csv/{file}')
-        plt.plot(longitudes, latitudes, marker='o', color='#1f77b4',
-                 linestyle='-')
-    longitudes, latitudes = get_path('path.dat')
+    parser = argparse.ArgumentParser(description="Plot searched path from file")
+    parser.add_argument('file', help='File with data to plot')
+    args = parser.parse_args()
+
+    draw_city_graph()
+
+    longitudes, latitudes = get_path(args.file)
     plt.plot(longitudes, latitudes, marker='o', color='#d62728',
              linestyle='-')
     plt.show()

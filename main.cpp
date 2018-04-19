@@ -1,10 +1,11 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <string>
 #include "lib/graph.h"
 
 std::string build_line_string(std::string line_filename) {
-    auto stripped = line_filename.substr(14, 2);
+    auto stripped = line_filename.substr(11, 2);
     if (stripped[0] == '0' && isdigit(stripped[1]))
         return stripped.substr(1, 1);
     else return stripped.substr(0, 2);
@@ -24,7 +25,6 @@ void load_tram_line(Graph &graph, std::string csv_filename) {
     getline(record, distance, ',');
     getline(record, longitude, ',');
     getline(record, latitude);
-//    std::cout << name << " "<< longitude << " " << latitude << std::endl;
     graph.add_vertex(name, atof(longitude.c_str()),
                      atof(latitude.c_str()));
 
@@ -35,7 +35,6 @@ void load_tram_line(Graph &graph, std::string csv_filename) {
         getline(record, distance, ',');
         getline(record, longitude, ',');
         getline(record, latitude);
-//        std::cout << name << " " << longitude << " " << latitude << std::endl;
         graph.add_vertex(name, atof(longitude.c_str()),
                          atof(latitude.c_str()));
         graph.add_tramline_to_vertex(name, tram_line);
@@ -46,7 +45,7 @@ void load_tram_line(Graph &graph, std::string csv_filename) {
 
 void load_graph(Graph& graph) {
     std::vector<std::string> csv_files{};
-    std::ifstream csv_stream("../csv_files.txt");
+    std::ifstream csv_stream("csv_files.txt");
     while (!csv_stream.eof()) {
         std::string file;
         csv_stream >> file;
@@ -54,85 +53,29 @@ void load_graph(Graph& graph) {
             csv_files.push_back(file);
     }
     for (auto &&file: csv_files) {
-        load_tram_line(graph, "../data/csv/" + file);
+        load_tram_line(graph, "data/csv/" + file);
     }
 }
 
-int show_menu() {
-    std::cout << "Choose option:" << std::endl;
-    std::cout << "\t1 - show all tram stops" << std::endl;
-    std::cout << "\t2 - search shortest path" << std::endl;
-    std::cout << "\t3 - save last path to .dat file" << std::endl;
-    std::cout << "\t4 - exit" << std::endl;
-    std::cout << "Your choice: ";
-    int choice;
-    std::cin >> choice;
-    return choice;
-}
-
-int find_path_menu() {
-    std::cout << "Choose path searching algorithm: " << std::endl;
-    std::cout << "\t1 - DFS - depth first search" << std::endl;
-    std::cout << "\t2 - BFS - breadth first search" << std::endl;
-    std::cout << "\t3 - A*" << std::endl;
-    std::cout << "Your choice: ";
-    int choice;
-    std::cin >> choice;
-    return choice;
-}
-
-int main() {
+int main(int argc, char** argv) {
     Graph g;
     load_graph(g);
     int choice, alg_choice;
     Path path;
     std::string starting, final, filename;
-    while(true) {
-        int choice = show_menu();
-        switch(choice) {
-            case 1:
-                g.print_graph(false);
-                break;
-
-            case 2:
-            std::cin.ignore();
-            std::cout << "Choose starting station: ";
-            getline(std::cin, starting);
-            std::cout << "Choose final station: ";
-            getline(std::cin, final);
-                alg_choice = find_path_menu();
-                switch(alg_choice) {
-                    case 1:
-                        path = g.DFS(starting, final);
-                        path.print_path();
-                        break;
-                    case 2:
-                        path = g.BFS(starting, final);
-                        path.print_path();
-                        break;
-                    case 3:
-                        path = g.a_star(starting, final);
-                        path.print_path();
-                        break;
-                    default:
-                    std::cout << "Wrong option. Returning to main menu.";
-                }
-                break;
-
-            case 3:
-            std::cout << "Set filename: ";
-            std::cin >> filename;
-                path.export_path(filename);
-                break;
-
-            case 4:
-                return 0;
-
-            default:
-            std::cout << "Invalid option. Please try again." << std::endl;
-        }
-
+    if(argc == 1) {
+        return 0;
     }
+    starting = argv[1];
+    final = argv[2];
+    if(std::string("dfs") == argv[3])
+        path = g.DFS(starting, final);
+    else if(std::string("bfs") == argv[3])
+        path = g.BFS(starting, final);
+    else
+        path = g.a_star(starting, final);
+    path.print_path();
+    path.export_path("path.dat");
 }
 
 

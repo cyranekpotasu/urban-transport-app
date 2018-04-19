@@ -65,7 +65,7 @@ class App(QWidget):
 
         grid.addWidget(self.city_map, 4, 0, 1, 6)
 
-        grid.addWidget(self.path_label, 5, 0)
+        grid.addWidget(self.path_label, 5, 0, 5, 5)
         grid.addWidget(find, 5, 5)
 
         self.buttons = QButtonGroup()

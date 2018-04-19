@@ -27,3 +27,16 @@ void Path::set_extensions(const int& extensions) {
 void Path::set_enqueuings(const int& enqueuings) {
     this->enqueuings = enqueuings;
 }
+
+void Path::check_transitions() const {
+    int i = 0;
+    for(const auto& node: path) {
+        auto intersection = path[i].tram_lines;
+        while(!intersection.empty()) {
+            i++;
+            auto next = path[i].tram_lines;
+            intersection = std::set_intersection(intersection.begin(), intersection.end(),
+                                                 next.begin(), next.end());
+        }
+    }
+}

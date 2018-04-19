@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <deque>
+#include <algorithm>
 #include "vertex.h"
 
 class Path {
@@ -20,6 +21,7 @@ public:
     void export_path(std::string filename) const;
     void set_extensions(const int& extensions);
     void set_enqueuings(const int& enqueuings);
+    void check_transitions() const;
 
 };
 

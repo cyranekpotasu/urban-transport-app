@@ -8,6 +8,8 @@ void Path::print_path() const {
         std::cout << ")" << std::endl;
     }
     std::cout << std::endl << "Path length: " << path_length << std::endl;
+    std::cout << "Enqueuings: " << enqueuings << std::endl;
+    std::cout << "Extensions: " << extensions << std::endl;
 }
 
 void Path::export_path(std::string filename) const {
@@ -16,4 +18,12 @@ void Path::export_path(std::string filename) const {
         path_coords << vertex.longitude << "," << vertex.latitude << std::endl;
     }
     path_coords.close();
+}
+
+void Path::set_extensions(const int& extensions) {
+    this->extensions = extensions;
+}
+
+void Path::set_enqueuings(const int& enqueuings) {
+    this->enqueuings = enqueuings;
 }

@@ -8,7 +8,9 @@
 
 class Path {
     std::deque<Vertex> path;
-    int path_length;
+    int path_length = 0;
+    int extensions = 0;
+    int enqueuings = 0;
 
 public:
     Path() = default;
@@ -16,6 +18,8 @@ public:
 
     void print_path() const;
     void export_path(std::string filename) const;
+    void set_extensions(const int& extensions);
+    void set_enqueuings(const int& enqueuings);
 
 };
 

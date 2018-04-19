@@ -90,7 +90,7 @@ class App(QWidget):
                                         self.combo_dest.currentText(),
                                         self.alg_option]).decode('utf-8')
         self.path_label.setText(path)
-        subprocess.run(['./graph_draw.py', 'path.dat'])
+        subprocess.run(['python3', 'graph_draw.py', 'path.dat'])
         self.city_map.setPixmap(QPixmap('path.png').scaledToWidth(500))
 
 

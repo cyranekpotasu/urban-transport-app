@@ -6,7 +6,7 @@ import sys
 import subprocess
 
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QComboBox, QMessageBox, QLabel, QGridLayout, \
-    QRadioButton, QButtonGroup
+    QRadioButton, QButtonGroup, QTextEdit
 from PyQt5.QtGui import QPixmap
 
 
@@ -27,7 +27,7 @@ class App(QWidget):
         self.algorithm_dict = {'DFS': 'dfs', 'BFS': 'bfs',
                                'A*': 'astar'}
         self.alg_option = 'dfs'
-        self.title = 'PyQt demo'
+        self.title = 'Transport Assistant'
         self.initUI()
 
     def initUI(self):
@@ -39,7 +39,8 @@ class App(QWidget):
         self.city_map.setPixmap(self.pixmap)
         find = QPushButton('Find path', self)
         find.clicked.connect(self.find_path)
-        self.path_label = QLabel('', self)
+        self.path_label = QTextEdit('', self)
+        self.path_label.setReadOnly(True)
 
         tram_stops = get_stop_names()
 
@@ -66,7 +67,7 @@ class App(QWidget):
         grid.addWidget(self.city_map, 4, 0, 1, 6)
 
         grid.addWidget(self.path_label, 5, 0, 5, 5)
-        grid.addWidget(find, 5, 5)
+        grid.addWidget(find, 9, 5)
 
         self.buttons = QButtonGroup()
         grid.addWidget(algorithm_label, 3, 0)

@@ -40,56 +40,64 @@ void Graph::print_graph(bool verbose) const noexcept {
 }
 
 Path Graph::BFS(const std::string &name, const std::string &name_dest) const {
-    /* Map to check wheter vertex was visited */
     std::map<std::string, bool> visited;
     std::map<Vertex, Vertex> parent_map;
-    /* Fill visited with false */
+    int extensions = 0;
+    int enqueuings = 0;
     for (const auto &vertex : vertices)
         visited[vertex.first] = false;
-    /* Mark first visited as true */
     visited[name] = true;
-    /* Create a queue for BFS */
     std::list<VertexPtr> queue;
     queue.push_back(this->vertices.at(name));
+    enqueuings++;
     while (!queue.empty()) {
         auto x = queue.front();
         queue.pop_front();
+        extensions++;
         if (x->name == name_dest) {
-            return trace_path(parent_map, *vertices.at(name), *vertices.at(name_dest));
+            auto path = trace_path(parent_map, *vertices.at(name), *vertices.at(name_dest));
+            path.set_enqueuings(enqueuings);
+            path.set_extensions(extensions);
+            return path;
         }
         for (const auto &neighbour : x->neighbours) {
             if (!visited.at(neighbour.first->name)) {
                 parent_map[*neighbour.first] = *x;
                 visited[neighbour.first->name] = true;
                 queue.push_back(neighbour.first);
+                enqueuings++;
             }
         }
     }
 }
 
 Path Graph::DFS(const std::string &name, const std::string &name_dest) const {
-    /* Map to check wheter vertex was visited */
     std::map<std::string, bool> visited;
     std::map<Vertex, Vertex> parent_map;
-    /* Fill visited with false */
+    int enqueuings = 0;
+    int extensions = 0;
     for (const auto &vertex : vertices)
         visited[vertex.first] = false;
-    /* Mark first visited as true */
     visited[name] = true;
-    /* Create a queue for BFS */
     std::list<VertexPtr> stack;
     stack.push_back(this->vertices.at(name));
+    enqueuings++;
     while (!stack.empty()) {
         auto x = stack.back();
         stack.pop_back();
+        extensions++;
         if (x->name == name_dest) {
-            return trace_path(parent_map, *vertices.at(name), *vertices.at(name_dest));
+            auto path = trace_path(parent_map, *vertices.at(name), *vertices.at(name_dest));
+            path.set_enqueuings(enqueuings);
+            path.set_extensions(extensions);
+            return path;
         }
         for (const auto &neighbour : x->neighbours) {
             if (!visited.at(neighbour.first->name)) {
                 parent_map[*neighbour.first] = *x;
                 visited[neighbour.first->name] = true;
                 stack.push_back(neighbour.first);
+                enqueuings++;
             }
         }
     }
@@ -113,11 +121,15 @@ Path Graph::a_star(const std::string &start, const std::string &dest) const {
     std::set<VertexPtr> closed;
     std::map<std::string, Node> visited;
     std::map<Vertex, Vertex> parent_map;
+    int enqueuings = 0;
+    int extensions = 0;
     auto destination = vertices.at(dest);
     opened.emplace(Node(vertices.at(start), 0, 0));
+    enqueuings++;
     while (opened.top().path_extension->name != dest) {
         auto current = opened.top();
         opened.pop();
+        extensions++;
         closed.insert(current.path_extension);
         for (const auto &neighbour: current.path_extension->neighbours) {
             auto neighbour_vertex = neighbour.first;
@@ -130,13 +142,17 @@ Path Graph::a_star(const std::string &start, const std::string &dest) const {
                 if (visited_node == visited.end() ||
                     (*visited_node).second.distance > next.distance) {
                     opened.push(next);
+                    enqueuings++;
                     visited[neighbour_vertex->name] = next;
                     parent_map[*neighbour_vertex] = *current.path_extension;
                 }
             }
         }
     }
-    return trace_path(parent_map, *vertices.at(start), *vertices.at(dest));
+    auto path = trace_path(parent_map, *vertices.at(start), *vertices.at(dest));
+    path.set_enqueuings(enqueuings);
+    path.set_extensions(extensions);
+    return path;
 }
 
 int Graph::get_heuristic_distance(const Vertex &from, const Vertex &to) const {

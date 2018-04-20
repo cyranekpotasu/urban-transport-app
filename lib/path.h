@@ -8,6 +8,7 @@
 #include "vertex.h"
 
 class Path {
+    using Transition = std::pair<std::string, std::set<std::string>>;
     std::deque<Vertex> path;
     int path_length = 0;
     int extensions = 0;
@@ -21,7 +22,8 @@ public:
     void export_path(std::string filename) const;
     void set_extensions(const int& extensions);
     void set_enqueuings(const int& enqueuings);
-    void check_transitions() const;
+    void print_transitions() const;
+    std::vector<Transition> check_transitions() const;
 
 };
 

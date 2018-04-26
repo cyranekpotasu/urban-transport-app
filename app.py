@@ -86,7 +86,7 @@ class App(QWidget):
             self.buttons.checkedButton().text()]
 
     def find_path(self):
-        path = subprocess.check_output(['./cmake-build-debug/UrbanTransportApp',
+        path = subprocess.check_output(['./bin/UrbanTransportApp',
                                         self.combo_start.currentText(),
                                         self.combo_dest.currentText(),
                                         self.alg_option]).decode('utf-8')

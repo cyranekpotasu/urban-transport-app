@@ -1,3 +1,12 @@
+# Urban Transport App
+Application finds path between two tram stops on
+the map of Wrocław. Uses 3 different searching
+algorithms: BFS, DFS and A*.
+
+Written for AI and algorithms course.
+
+Data acquired from the [website of Wrocław.](https://www.wroclaw.pl/open-data/dataset/przystanki-tramwajowe-i-autobusowe)
+
 ## User guide
 #### Requirements
 * python3
